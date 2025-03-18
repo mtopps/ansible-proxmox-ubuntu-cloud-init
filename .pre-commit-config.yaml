@@ -6,11 +6,6 @@ repos:
       - id: end-of-file-fixer
       - id: trailing-whitespace
       - id: check-yaml
-        exclude: |
-          (?x)^(
-            files/home/homepage/config/services.yaml|
-            files/home/homepage/config/bookmarks.yaml
-          )$
 
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.23.1

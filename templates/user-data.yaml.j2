@@ -1,0 +1,38 @@
+#cloud-config
+groups:
+  - docker
+user: {{ ciuser }}
+password: {{ encrypted_password }}
+ssh_authorized_keys:
+  - {{ sshkey }}
+chpasswd:
+  expire: False
+users:
+  - name: {{ ciuser }}
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users, admin, docker
+    uid: {{ uid }}
+    shell: /bin/bash
+packages:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gnupg2
+  - htop
+  - qemu-guest-agent
+  - software-properties-common
+  - lsb-release
+timezone: {{ timezone }}
+package_update: true
+package_upgrade: true
+package_reboot_if_required: true
+runcmd:
+  - systemctl daemon-reload
+  - swapoff -a
+  - sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+  - curl -fsSL https://get.docker.com -o get-docker.sh && echo "Installing Docker"
+  - sh get-docker.sh && echo "Docker installed"
+  - systemctl enable qemu-guest-agent
+  - systemctl start qemu-guest-agent
+  - systemctl enable docker
+  - systemctl start docker

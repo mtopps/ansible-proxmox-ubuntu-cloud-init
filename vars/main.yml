@@ -1,0 +1,42 @@
+---
+timezone: Pacific/Auckland
+
+proxmox:
+  node: "pve"
+  storage: "storage"
+
+cloud_image:
+  url: "https://cloud-images.ubuntu.com/releases/noble/release/ubuntu-24.04-server-cloudimg-amd64.img"
+  storage: "/var/lib/vz/template/iso"
+  name: "ubuntu-24.04-server-cloudimg-amd64.img"
+
+vm:
+  id: 9001
+  cores: 2
+  cpu: host
+  memory: 4096
+  resize_disk: 20
+  QEMU_AGENT: true
+  UEFI: true
+
+template:
+  name: "ubuntu-24.04-cloudinit-template"
+
+user_data:
+  file: "user-data.yaml.j2"
+  storage: "local"
+  storage_path: "/var/lib/vz/snippets"
+
+users:
+  name: "matt"
+  sudo: "ALL=(ALL) NOPASSWD:ALL"
+  uid: "1027"
+  groups: "users, admin, docker"
+  shell: "/bin/bash"
+
+chpasswd:
+  expire: False
+
+package:
+  upgrade: true
+  reboot_if_required: false

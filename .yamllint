@@ -3,13 +3,12 @@ extends: default
 
 ignore: |
   individuals/
-  ~/.ansible/roles/
 
 rules:
   braces: disable
   document-start: disable
   line-length:
-    max: 999
+    max: 2000
     allow-non-breakable-words: true
     allow-non-breakable-inline-mappings: true
   comments:

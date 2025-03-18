@@ -1,37 +1,39 @@
 #cloud-config
 groups:
   - docker
-user: {{ ciuser }}
-password: {{ encrypted_password }}
+user: {{ users.name }}
 ssh_authorized_keys:
   - {{ sshkey }}
+ssh:
+  emit_keys_to_console: false
 chpasswd:
-  expire: False
+  expire: {{ chpasswd.expire }}
 users:
-  - name: {{ ciuser }}
-    sudo: ALL=(ALL) NOPASSWD:ALL
-    groups: users, admin, docker
-    uid: {{ uid }}
-    shell: /bin/bash
+  - name: {{ users.name }}
+    sudo: {{ users.sudo }}
+    groups: {{ users.groups }}
+    uid: {{ users.uid }}
+    shell: {{ users.shell }}
+    passwd: {{ encrypted_password }}
+timezone: {{ timezone }}
+package_update: true
+package_upgrade: {{ package.upgrade }}
+package_reboot_if_required: {{ package.reboot_if_required }}
 packages:
   - apt-transport-https
   - ca-certificates
   - curl
   - gnupg2
   - htop
+  - lsb-release
   - qemu-guest-agent
   - software-properties-common
-  - lsb-release
-timezone: {{ timezone }}
-package_update: true
-package_upgrade: true
-package_reboot_if_required: true
 runcmd:
   - systemctl daemon-reload
   - swapoff -a
   - sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
-  - curl -fsSL https://get.docker.com -o get-docker.sh && echo "Installing Docker"
-  - sh get-docker.sh && echo "Docker installed"
+  - curl -fsSL https://get.docker.com -o get-docker.sh
+  - sh get-docker.sh
   - systemctl enable qemu-guest-agent
   - systemctl start qemu-guest-agent
   - systemctl enable docker

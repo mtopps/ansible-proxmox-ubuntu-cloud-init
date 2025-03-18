@@ -1,4 +1,3 @@
-vars/secrets.yaml
+vars/secrets.yml
 .ansible/**
 .vscode/**
-
